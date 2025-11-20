@@ -10,8 +10,8 @@ export async function updateSession(request: NextRequest) {
 
     // Debugging Vercel Environment Variables
     console.log('Middleware Debug: Checking Env Vars');
-    console.log('NEXT_PUBLIC_SUPABASE_URL exists:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
-    console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+    console.log('NEXT_PUBLIC_SUPABASE_URL exists:', !!process.env.SUPABASE_URL);
+    console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY exists:', !!process.env.SUPABASE_ANON_KEY);
 
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
