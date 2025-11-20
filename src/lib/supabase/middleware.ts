@@ -8,10 +8,23 @@ export async function updateSession(request: NextRequest) {
         },
     })
 
+    // process.env が null/undefined ではないかチェック
+    console.log('Is process.env defined?', typeof process.env !== 'undefined');
+
+    // process.env がオブジェクトであり、キーをいくつ持っているかチェック（オブジェクト全体の確認）
+    if (typeof process.env !== 'undefined' && typeof process.env === 'object') {
+        const keys = Object.keys(process.env);
+        console.log('process.env key count:', keys.length);
+        console.log('Example key:', keys.length > 0 ? keys[0] : 'None');
+    }
+
     // Debugging Vercel Environment Variables
     console.log('Middleware Debug: Checking Env Vars');
     console.log('SUPABASE_URL exists:', !!process.env.SUPABASE_URL);
     console.log('SUPABASE_ANON_KEY exists:', !!process.env.SUPABASE_ANON_KEY);
+    console.log('NEXT_PUBLIC_SUPABASE_URL exists:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
+    console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
 
     const supabase = createServerClient(
         process.env.SUPABASE_URL!,
