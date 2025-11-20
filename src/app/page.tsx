@@ -11,10 +11,10 @@ export default function Home() {
         <div className="container px-4 md:px-6 relative z-10">
           <div className="flex flex-col items-center text-center space-y-4">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-primary">
-              思考の宇宙へ、ようこそ。
+              大阪公立大学囲碁部へようこそ！
             </h1>
             <p className="text-muted-foreground text-lg md:text-xl max-w-[700px]">
-              大学囲碁部は、初心者から有段者まで、<br className="md:hidden" />
+              大阪公立大学囲碁部は、初心者から有段者まで、<br className="md:hidden" />
               囲碁を通じて交流を深めるサークルです。
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-8">

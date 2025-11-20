@@ -28,8 +28,7 @@ export default function AboutPage() {
                         <div className="space-y-4">
                             <h3 className="text-xl font-semibold text-primary">「思考を楽しむ、仲間と楽しむ」</h3>
                             <p className="text-muted-foreground leading-relaxed">
-                                囲碁は単なるボードゲームではありません。対局を通じて相手との対話を行い、
-                                自己の思考を深める「知的な冒険」です。<br /><br />
+                                囲碁は単なるボードゲームではありません。対局を通じて相手との対話を行い、<br /><br />
                                 当部では、勝敗だけにこだわるのではなく、
                                 対局後の検討（感想戦）を通じてお互いを高め合うことを大切にしています。
                                 初心者から有段者まで、全ての部員が「囲碁って楽しい」と思える場所を目指しています。
@@ -66,7 +65,7 @@ export default function AboutPage() {
                             </CardHeader>
                             <CardContent>
                                 <p className="text-sm text-muted-foreground mb-2">
-                                    <strong>毎週 火・金曜日</strong><br />
+                                    <strong>毎週 木曜日</strong><br />
                                     16:30 〜 20:00
                                 </p>
                                 <p className="text-xs text-muted-foreground">
@@ -82,7 +81,7 @@ export default function AboutPage() {
                             </CardHeader>
                             <CardContent>
                                 <p className="text-sm text-muted-foreground">
-                                    <strong>学生会館 3階 和室A</strong>
+                                    <strong>中百舌鳥 : <br />杉本 : </strong>
                                 </p>
                                 <p className="text-xs text-muted-foreground mt-2">
                                     キャンパスマップのリンクはこちら<br />
@@ -100,22 +99,12 @@ export default function AboutPage() {
                         <div className="relative">
                             <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full bg-primary" />
                             <p className="text-sm text-muted-foreground">1970年</p>
-                            <p className="font-medium">大学囲碁同好会として発足</p>
-                        </div>
-                        <div className="relative">
-                            <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full bg-muted" />
-                            <p className="text-sm text-muted-foreground">1985年</p>
-                            <p className="font-medium">「囲碁部」に昇格。関東学生囲碁連盟に加盟。</p>
-                        </div>
-                        <div className="relative">
-                            <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full bg-muted" />
-                            <p className="text-sm text-muted-foreground">2010年</p>
-                            <p className="font-medium">学生囲碁十傑戦で部員が優勝。</p>
+                            <p className="font-medium">大学囲碁部として発足</p>
                         </div>
                         <div className="relative">
                             <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full bg-muted" />
                             <p className="text-sm text-muted-foreground">現在</p>
-                            <p className="font-medium">部員数30名を超え、活発に活動中。</p>
+                            <p className="font-medium">部員数10名を超え、活発に活動中。</p>
                         </div>
                     </div>
                 </section>
