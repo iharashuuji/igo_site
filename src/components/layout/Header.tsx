@@ -25,6 +25,9 @@ export function Header() {
                     <Link href="/faq" className="transition-colors hover:text-primary">
                         よくある質問
                     </Link>
+                    <Link href="/admin" className="transition-colors hover:text-primary">
+                        管理者画面
+                    </Link>
                 </nav>
 
                 <div className="flex items-center gap-4">
