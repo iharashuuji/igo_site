@@ -1,20 +1,22 @@
 "use client";
 
+import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea"; // Will need to create this
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Will need to create this
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { addGame, GameState } from "@/app/actions/games";
 
-// Mock Members for Dropdown
-const MEMBERS = [
-    { id: "1", name: "田中 太郎 (五段)" },
-    { id: "2", name: "佐藤 花子 (初段)" },
-    { id: "3", name: "鈴木 一郎 (10級)" },
-];
 
-export default function GameEntryPage() {
+const initialState: GameState = {
+    message: "",
+};
+
+export default function GameEntryClient({ members }: { members: any[] }) {
+    const [state, formAction, isPending] = useActionState(addGame, initialState);
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -26,28 +28,28 @@ export default function GameEntryPage() {
                     <CardTitle>新規対局記録</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form className="space-y-6">
+                    <form action={formAction} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Date & Event */}
                             <div className="space-y-2">
-                                <Label htmlFor="date">対局日</Label>
-                                <Input id="date" type="date" defaultValue={new Date().toISOString().split('T')[0]} />
+                                <Label htmlFor="played_at">対局日</Label>
+                                <Input id="played_at" name="played_at" type="date" defaultValue={new Date().toISOString().split('T')[0]} />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="event">大会・イベント名 (任意)</Label>
-                                <Input id="event" placeholder="例: 春季合宿リーグ" />
+                                <Label htmlFor="event_name">大会・イベント名 (任意)</Label>
+                                <Input id="event_name" name="event_name" placeholder="例: 春季合宿リーグ" />
                             </div>
 
                             {/* Black Player */}
                             <div className="space-y-2">
-                                <Label htmlFor="black">黒番</Label>
-                                <Select>
+                                <Label htmlFor="black_player_id">黒番</Label>
+                                <Select name="black_player_id">
                                     <SelectTrigger>
                                         <SelectValue placeholder="部員を選択" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {MEMBERS.map((m) => (
-                                            <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                                        {members.map((m) => (
+                                            <SelectItem key={m.id} value={m.id}>{m.name} ({m.rank})</SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
@@ -55,14 +57,14 @@ export default function GameEntryPage() {
 
                             {/* White Player */}
                             <div className="space-y-2">
-                                <Label htmlFor="white">白番</Label>
-                                <Select>
+                                <Label htmlFor="white_player_id">白番</Label>
+                                <Select name="white_player_id">
                                     <SelectTrigger>
                                         <SelectValue placeholder="部員を選択" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {MEMBERS.map((m) => (
-                                            <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                                        {members.map((m) => (
+                                            <SelectItem key={m.id} value={m.id}>{m.name} ({m.rank})</SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
@@ -71,17 +73,18 @@ export default function GameEntryPage() {
                             {/* Handicap & Komi */}
                             <div className="space-y-2">
                                 <Label htmlFor="handicap">手合割</Label>
-                                <Select defaultValue="even">
+                                <Select name="handicap" defaultValue="互先">
                                     <SelectTrigger>
                                         <SelectValue placeholder="手合割を選択" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="even">互先 (コミ6目半)</SelectItem>
-                                        <SelectItem value="sen">定先</SelectItem>
-                                        <SelectItem value="2">2子</SelectItem>
-                                        <SelectItem value="3">3子</SelectItem>
-                                        <SelectItem value="4">4子</SelectItem>
-                                        <SelectItem value="high">5子以上</SelectItem>
+                                        <SelectItem value="互先">互先 (コミ6目半)</SelectItem>
+                                        <SelectItem value="定先">定先</SelectItem>
+                                        <SelectItem value="2子">2子</SelectItem>
+                                        <SelectItem value="3子">3子</SelectItem>
+                                        <SelectItem value="4子">4子</SelectItem>
+                                        <SelectItem value="5子">5子</SelectItem>
+                                        <SelectItem value="6子">6子</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -89,26 +92,32 @@ export default function GameEntryPage() {
                             {/* Result */}
                             <div className="space-y-2">
                                 <Label htmlFor="result">結果</Label>
-                                <Input id="result" placeholder="例: B+R (黒中押し勝ち), W+3.5" />
+                                <Input id="result" name="result" placeholder="例: B+R (黒中押し勝ち), W+3.5" required />
                             </div>
                         </div>
 
                         {/* SGF Content */}
                         <div className="space-y-2">
-                            <Label htmlFor="sgf">SGFデータ (任意)</Label>
+                            <Label htmlFor="sgf_content">SGFデータ (任意)</Label>
                             <Textarea
-                                id="sgf"
+                                id="sgf_content"
+                                name="sgf_content"
                                 placeholder="(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]...)"
                                 className="font-mono text-xs h-32"
                             />
-                            <p className="text-xs text-muted-foreground">
-                                KifuDepotや各種アプリからコピーしたSGFテキストを貼り付けてください。
-                            </p>
                         </div>
+
+                        {state.message && (
+                            <p className={`text-sm font-medium ${state.message.includes('エラー') ? 'text-destructive' : 'text-green-600'}`}>
+                                {state.message}
+                            </p>
+                        )}
 
                         <div className="flex justify-end gap-4">
                             <Button variant="outline" type="button">キャンセル</Button>
-                            <Button type="submit">登録する</Button>
+                            <Button type="submit" disabled={isPending}>
+                                {isPending ? '登録する' : '登録する'}
+                            </Button>
                         </div>
                     </form>
                 </CardContent>

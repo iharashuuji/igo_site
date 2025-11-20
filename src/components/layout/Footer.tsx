@@ -24,7 +24,7 @@ export function Footer() {
                         <h4 className="text-sm font-semibold mb-4">お問い合わせ</h4>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li><Link href="/contact" className="hover:text-primary">お問い合わせフォーム</Link></li>
-                            <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary">公式X (Twitter)</a></li>
+                            <li><a href="https://x.com/OMUigo_twi" target="_blank" rel="noopener noreferrer" className="hover:text-primary">公式X (Twitter)</a></li>
                         </ul>
                     </div>
                 </div>

@@ -11,29 +11,48 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  --color-primary: #2C3E50;
+  --color-primary: #3b82f6;
+  /* Brighter Blue (Tailwind Blue-500-ish) instead of #2C3E50 */
   --color-primary-foreground: #FFFFFF;
-  
-  --color-secondary: #E3B261;
-  --color-secondary-foreground: #1A202C;
-  
-  --color-accent: #27AE60;
+
+  --color-secondary: #f59e0b;
+  /* Brighter Amber */
+  --color-secondary-foreground: #FFFFFF;
+
+  --color-accent: #10b981;
+  /* Brighter Emerald */
   --color-accent-foreground: #FFFFFF;
-  
-  --color-muted: #F3F4F6;
-  --color-muted-foreground: #6B7280;
+
+  --color-muted: #f8fafc;
+  /* Lighter Slate */
+  --color-muted-foreground: #64748b;
 }
 
-@media (prefers-color-scheme: dark) {
+/* Dark mode removed to force bright theme as requested */
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
-    /* Dark mode adjustments if needed, for now keeping brand colors consistent or relying on opacity */
   }
-}
+} */
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Global Container Centering */
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
 }

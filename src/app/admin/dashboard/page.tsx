@@ -1,8 +1,47 @@
+import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Trophy, FileText, Activity } from "lucide-react";
 import Link from "next/link";
 
-export default function AdminDashboardPage() {
+async function getDashboardStats() {
+    const supabase = await createClient();
+
+    // Get Member Count
+    const { count: memberCount } = await supabase
+        .from("members")
+        .select("*", { count: "exact", head: true });
+
+    // Get Game Count (This Month)
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const { count: gameCount } = await supabase
+        .from("games")
+        .select("*", { count: "exact", head: true })
+        .gte("played_at", startOfMonth.toISOString());
+
+    // Get Recent Games
+    const { data: recentGames } = await supabase
+        .from("games")
+        .select(`
+      *,
+      black_player:members!black_player_id(name, rank),
+      white_player:members!white_player_id(name, rank)
+    `)
+        .order("played_at", { ascending: false })
+        .limit(5);
+
+    return {
+        memberCount: memberCount || 0,
+        gameCount: gameCount || 0,
+        recentGames: recentGames || [],
+    };
+}
+
+export default async function AdminDashboardPage() {
+    const stats = await getDashboardStats();
+
     return (
         <div className="space-y-6">
             <h2 className="text-2xl font-bold tracking-tight">ダッシュボード</h2>
@@ -14,9 +53,9 @@ export default function AdminDashboardPage() {
                         <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">32名</div>
+                        <div className="text-2xl font-bold">{stats.memberCount}名</div>
                         <p className="text-xs text-muted-foreground">
-                            先月比 +2名
+                            現役・OB含む
                         </p>
                     </CardContent>
                 </Card>
@@ -26,9 +65,9 @@ export default function AdminDashboardPage() {
                         <Activity className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">145局</div>
+                        <div className="text-2xl font-bold">{stats.gameCount}局</div>
                         <p className="text-xs text-muted-foreground">
-                            先月比 +12%
+                            {new Date().getMonth() + 1}月
                         </p>
                     </CardContent>
                 </Card>
@@ -38,9 +77,9 @@ export default function AdminDashboardPage() {
                         <FileText className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">3件</div>
+                        <div className="text-2xl font-bold">-</div>
                         <p className="text-xs text-muted-foreground">
-                            確認が必要です
+                            機能未実装
                         </p>
                     </CardContent>
                 </Card>
@@ -50,9 +89,9 @@ export default function AdminDashboardPage() {
                         <Trophy className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">関東リーグ</div>
+                        <div className="text-2xl font-bold">-</div>
                         <p className="text-xs text-muted-foreground">
-                            あと14日
+                            予定なし
                         </p>
                     </CardContent>
                 </Card>
@@ -65,19 +104,25 @@ export default function AdminDashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-8">
-                            {[1, 2, 3, 4, 5].map((i) => (
-                                <div key={i} className="flex items-center">
-                                    <div className="ml-4 space-y-1">
-                                        <p className="text-sm font-medium leading-none">田中 太郎 (五段) vs 佐藤 花子 (初段)</p>
-                                        <p className="text-sm text-muted-foreground">
-                                            互先 / 黒中押し勝ち
-                                        </p>
+                            {stats.recentGames.length > 0 ? (
+                                stats.recentGames.map((game: any) => (
+                                    <div key={game.id} className="flex items-center">
+                                        <div className="ml-4 space-y-1">
+                                            <p className="text-sm font-medium leading-none">
+                                                {game.black_player?.name} ({game.black_player?.rank}) vs {game.white_player?.name} ({game.white_player?.rank})
+                                            </p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {game.handicap} / {game.result}
+                                            </p>
+                                        </div>
+                                        <div className="ml-auto font-medium text-xs text-muted-foreground">
+                                            {new Date(game.played_at).toLocaleDateString()}
+                                        </div>
                                     </div>
-                                    <div className="ml-auto font-medium text-xs text-muted-foreground">
-                                        2時間前
-                                    </div>
-                                </div>
-                            ))}
+                                ))
+                            ) : (
+                                <p className="text-sm text-muted-foreground">対局記録はありません。</p>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
@@ -86,7 +131,7 @@ export default function AdminDashboardPage() {
                         <CardTitle>クイックアクション</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                        <Link href="/admin/games" className="block p-3 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors text-sm font-medium">
+                        <Link href="/admin/dashboard/games" className="block p-3 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors text-sm font-medium">
                             + 新しい対局結果を入力
                         </Link>
                         <Link href="/admin/members" className="block p-3 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors text-sm font-medium">

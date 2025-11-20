@@ -21,7 +21,7 @@ export default function AdminLayout({
                             ダッシュボード
                         </Button>
                     </Link>
-                    <Link href="/admin/games">
+                    <Link href="/admin/dashboard/games">
                         <Button variant="ghost" className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800">
                             対局結果入力
                         </Button>

@@ -20,8 +20,8 @@ export default function ContactPage() {
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2">
-                    <Card>
-                        <CardHeader>
+                    <Card className="text-center">
+                        <CardHeader className="flex flex-col items-center">
                             <Mail className="h-10 w-10 text-primary mb-2" />
                             <CardTitle>お問い合わせフォーム</CardTitle>
                             <CardDescription>
@@ -38,8 +38,8 @@ export default function ContactPage() {
                         </CardContent>
                     </Card>
 
-                    <Card>
-                        <CardHeader>
+                    <Card className="text-center">
+                        <CardHeader className="flex flex-col items-center">
                             <MessageCircle className="h-10 w-10 text-primary mb-2" />
                             <CardTitle>公式X (Twitter)</CardTitle>
                             <CardDescription>
@@ -49,8 +49,8 @@ export default function ContactPage() {
                         </CardHeader>
                         <CardContent>
                             <Button variant="outline" className="w-full" asChild>
-                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                                    @UniversityGoClub
+                                <a href="https://x.com/OMUigo_twi" target="_blank" rel="noopener noreferrer">
+                                    @ハム大囲碁部
                                 </a>
                             </Button>
                         </CardContent>
