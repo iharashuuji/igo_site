@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import Link from "next/link";
 import { ArrowRight, Calendar, Users, BookOpen } from "lucide-react";
 import { getBlogs } from "@/lib/microcms";
+import Image from "next/image";
 
 export default async function Home() {
   const posts = await getBlogs();
@@ -89,11 +90,11 @@ export default async function Home() {
                   <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                     <div className="aspect-video bg-muted w-full object-cover rounded-t-xl flex items-center justify-center text-muted-foreground relative overflow-hidden">
                       {post.eyecatch?.url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
                           src={post.eyecatch.url}
                           alt={post.title}
-                          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       ) : (
                         <span className="text-sm">No Image</span>
