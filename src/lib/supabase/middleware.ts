@@ -2,30 +2,14 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
+    // 1. レスポンスを最初に定義
     let response = NextResponse.next({
         request: {
             headers: request.headers,
         },
-    })
+    });
 
-    // process.env が null/undefined ではないかチェック
-    console.log('Is process.env defined?', typeof process.env !== 'undefined');
-
-    // process.env がオブジェクトであり、キーをいくつ持っているかチェック（オブジェクト全体の確認）
-    if (typeof process.env !== 'undefined' && typeof process.env === 'object') {
-        const keys = Object.keys(process.env);
-        console.log('process.env key count:', keys.length);
-        console.log('Example key:', keys.length > 0 ? keys[0] : 'None');
-    }
-
-    // Debugging Vercel Environment Variables
-    console.log('Middleware Debug: Checking Env Vars');
-    console.log('SUPABASE_URL exists:', !!process.env.SUPABASE_URL);
-    console.log('SUPABASE_ANON_KEY exists:', !!process.env.SUPABASE_ANON_KEY);
-    console.log('NEXT_PUBLIC_SUPABASE_URL exists:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
-    console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-
-
+    // 2. createServerClient の呼び出し方を変え、response を渡す
     const supabase = createServerClient(
         process.env.SUPABASE_URL!,
         process.env.SUPABASE_ANON_KEY!,
@@ -36,33 +20,37 @@ export async function updateSession(request: NextRequest) {
                 },
                 setAll(cookiesToSet) {
                     cookiesToSet.forEach(({ name, value, options }) => {
-                        request.cookies.set(name, value)
-                        response.cookies.set(name, value, options)
-                    })
+                        // response への書き込み処理を修正
+                        response.cookies.set(name, value, options);
+                    });
                 },
             },
         }
-    )
+    );
 
-    // Refresh session if expired - required for Server Components
-    // https://supabase.com/docs/guides/auth/server-side/nextjs
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
+    // 3. セッションリフレッシュを実行
+    await supabase.auth.getUser(); 
+    // ↑ この呼び出しによって、setAll がトリガーされ、response に新しい Cookie が書き込まれます。
 
-    // Protect Admin Routes
-    if (request.nextUrl.pathname.startsWith('/admin') && request.nextUrl.pathname !== '/admin') {
+    // 4. Protect Admin Routes (このロジックは正常)
+    const pathname = request.nextUrl.pathname;
+    const { data: { user } } = await supabase.auth.getUser(); // 再度ユーザー情報を取得（セッションリフレッシュ後）
+
+    // /admin および /admin 配下で、未認証ユーザーをリダイレクト
+    if (pathname.startsWith('/admin') && pathname !== '/admin') {
         if (!user) {
-            return NextResponse.redirect(new URL('/admin', request.url))
+            // ★ リダイレクトレスポンスにも、更新された Cookie が含まれるように修正
+            const redirectResponse = NextResponse.redirect(new URL('/admin', request.url));
+            redirectResponse.headers.set('Set-Cookie', response.headers.get('Set-Cookie') || '');
+            return redirectResponse;
         }
     }
 
-    // Redirect to dashboard if already logged in and visiting login page
-    if (request.nextUrl.pathname === '/admin') {
-        if (user) {
-            return NextResponse.redirect(new URL('/admin/dashboard', request.url))
-        }
+    // 5. ログイン済みの場合はダッシュボードにリダイレクト (このロジックは正常)
+    if (pathname === '/admin' && user) {
+        return NextResponse.redirect(new URL('/admin/dashboard', request.url));
     }
-
-    return response
+    
+    // 6. 最後に、Cookieが書き込まれたresponseを返す
+    return response;
 }
