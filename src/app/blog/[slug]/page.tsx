@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { getPostBySlug } from "@/lib/supabase/queries";
+import { getBlog } from "@/lib/microcms";
 import { Metadata } from "next";
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { slug } = await params;
-    const post = await getPostBySlug(slug);
+    const post = await getBlog(slug);
 
     if (!post) {
         return {
@@ -19,13 +19,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     return {
         title: `${post.title} | 囲碁部`,
-        description: post.content?.substring(0, 100),
+        description: post.content?.replace(/<[^>]*>/g, '').substring(0, 100),
     };
 }
 
 export default async function BlogPostPage({ params }: Props) {
     const { slug } = await params;
-    const post = await getPostBySlug(slug);
+    const post = await getBlog(slug);
 
     if (!post) {
         notFound();
@@ -35,9 +35,9 @@ export default async function BlogPostPage({ params }: Props) {
         <article className="container py-12 max-w-3xl mx-auto space-y-8">
             <div className="space-y-4 text-center">
                 <div className="flex items-center justify-center gap-4">
-                    <Badge>{post.category}</Badge>
+                    {post.category && <Badge>{post.category.name}</Badge>}
                     <time className="text-sm text-muted-foreground">
-                        {new Date(post.published_at).toLocaleDateString()}
+                        {new Date(post.publishedAt).toLocaleDateString()}
                     </time>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
@@ -45,11 +45,11 @@ export default async function BlogPostPage({ params }: Props) {
                 </h1>
             </div>
 
-            {post.thumbnail_url && (
+            {post.eyecatch?.url && (
                 <div className="aspect-video relative rounded-lg overflow-hidden bg-slate-100">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                        src={post.thumbnail_url}
+                        src={post.eyecatch.url}
                         alt={post.title}
                         className="object-cover w-full h-full"
                     />
@@ -57,15 +57,7 @@ export default async function BlogPostPage({ params }: Props) {
             )}
 
             <div className="prose prose-slate max-w-none">
-                {/* 
-          Rendering content as-is. 
-          If content is Markdown, we'd need a parser (e.g. react-markdown).
-          If HTML, dangerouslySetInnerHTML.
-          For now, assuming plain text or simple HTML for simplicity, 
-          or just dumping it. Ideally, use a library.
-          Let's assume it's just text for now to be safe, or simple HTML.
-        */}
-                <div className="whitespace-pre-wrap">{post.content}</div>
+                <div dangerouslySetInnerHTML={{ __html: post.content }} />
             </div>
         </article>
     );

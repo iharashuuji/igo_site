@@ -1,46 +1,56 @@
-import { Article } from "@/types";
+import { Blog } from "@/types";
 
-// Mock Data
-const MOCK_ARTICLES: Article[] = [
-    {
-        id: "1",
-        createdAt: "2024-04-10T10:00:00Z",
-        updatedAt: "2024-04-10T10:00:00Z",
-        publishedAt: "2024-04-10T10:00:00Z",
-        revisedAt: "2024-04-10T10:00:00Z",
-        title: "春の新歓活動が始まりました！",
-        content: "<h2>新入生の皆さん、ようこそ！</h2><p>今年も新歓の季節がやってきました。囲碁部では...</p>",
-        category: { id: "news", name: "お知らせ" },
-    },
-    {
-        id: "2",
-        createdAt: "2024-04-15T10:00:00Z",
-        updatedAt: "2024-04-15T10:00:00Z",
-        publishedAt: "2024-04-15T10:00:00Z",
-        revisedAt: "2024-04-15T10:00:00Z",
-        title: "春季合宿の様子をお届けします",
-        content: "<p>3泊4日で春季合宿に行ってきました。朝から晩まで囲碁漬けの...</p>",
-        category: { id: "blog", name: "ブログ" },
-    },
-    {
-        id: "3",
-        createdAt: "2024-04-20T10:00:00Z",
-        updatedAt: "2024-04-20T10:00:00Z",
-        publishedAt: "2024-04-20T10:00:00Z",
-        revisedAt: "2024-04-20T10:00:00Z",
-        title: "初心者向け囲碁講座 第1回",
-        content: "<p>今回は「アタリ」について解説します。アタリとは...</p>",
-        category: { id: "lecture", name: "講座" },
-    },
-];
+// MicroCMS Settings
+const SERVICE_DOMAIN = "k8z6onfj9h";
+const API_KEY = process.env.MICROCMS_API_KEY;
 
-export async function getArticles(): Promise<Article[]> {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return MOCK_ARTICLES;
+if (!API_KEY) {
+    console.warn("MICROCMS_API_KEY is not set");
 }
 
-export async function getArticle(id: string): Promise<Article | null> {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return MOCK_ARTICLES.find((article) => article.id === id) || null;
+export async function getBlogs(): Promise<Blog[]> {
+    if (!API_KEY) return [];
+
+    try {
+        const res = await fetch(`https://${SERVICE_DOMAIN}.microcms.io/api/v1/blogs`, {
+            headers: {
+                "X-MICROCMS-API-KEY": API_KEY,
+            },
+            next: { revalidate: 60 }, // Cache for 60 seconds
+        });
+
+        if (!res.ok) {
+            throw new Error("Failed to fetch blogs");
+        }
+
+        const data = await res.json();
+        return data.contents;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+export async function getBlog(id: string): Promise<Blog | null> {
+    if (!API_KEY) return null;
+
+    try {
+        const res = await fetch(`https://${SERVICE_DOMAIN}.microcms.io/api/v1/blogs/${id}`, {
+            headers: {
+                "X-MICROCMS-API-KEY": API_KEY,
+            },
+            next: { revalidate: 60 },
+        });
+
+        if (!res.ok) {
+            if (res.status === 404) return null;
+            throw new Error("Failed to fetch blog");
+        }
+
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 }
