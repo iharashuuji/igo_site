@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { getBlogs } from "@/lib/microcms";
+import Image from "next/image";
 
 export const metadata = {
     title: "ブログ・お知らせ | 囲碁部",
@@ -26,11 +27,11 @@ export default async function BlogPage() {
                         <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow">
                             <div className="aspect-video bg-slate-100 relative">
                                 {post.eyecatch?.url ? (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img
+                                    <Image
                                         src={post.eyecatch.url}
                                         alt={post.title}
-                                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                                        fill
+                                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                                     />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-slate-300 bg-slate-50">

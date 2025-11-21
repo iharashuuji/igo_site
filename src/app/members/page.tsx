@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getPublicMembers } from "@/lib/supabase/queries";
+import Image from "next/image";
 
 export const metadata = {
     title: "部員紹介 | 囲碁部",
@@ -22,11 +23,14 @@ export default async function MembersPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {members.map((member) => (
                     <Card key={member.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                        <div className="h-32 bg-slate-100 flex items-center justify-center text-4xl">
-                            {/* Placeholder for Avatar - Supabase Storage integration later */}
+                        <div className="h-32 bg-slate-100 flex items-center justify-center text-4xl relative">
                             {member.avatar_url ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={member.avatar_url} alt={member.name} className="w-full h-full object-cover" />
+                                <Image
+                                    src={member.avatar_url}
+                                    alt={member.name}
+                                    fill
+                                    className="object-cover"
+                                />
                             ) : (
                                 <span>{member.name[0]}</span>
                             )}

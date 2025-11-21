@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { getBlog } from "@/lib/microcms";
 import { Metadata } from "next";
+import Image from "next/image";
 
 type Props = {
     params: Promise<{ slug: string }>;
@@ -47,11 +48,11 @@ export default async function BlogPostPage({ params }: Props) {
 
             {post.eyecatch?.url && (
                 <div className="aspect-video relative rounded-lg overflow-hidden bg-slate-100">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                         src={post.eyecatch.url}
                         alt={post.title}
-                        className="object-cover w-full h-full"
+                        fill
+                        className="object-cover"
                     />
                 </div>
             )}

@@ -16,7 +16,7 @@ export async function getBlogs(): Promise<Blog[]> {
             headers: {
                 "X-MICROCMS-API-KEY": API_KEY,
             },
-            next: { revalidate: 60 }, // Cache for 60 seconds
+            next: { revalidate: 3600 }, // Cache for 1 hour
         });
 
         if (!res.ok) {
@@ -39,7 +39,7 @@ export async function getBlog(id: string): Promise<Blog | null> {
             headers: {
                 "X-MICROCMS-API-KEY": API_KEY,
             },
-            next: { revalidate: 60 },
+            next: { revalidate: 3600 }, // Cache for 1 hour
         });
 
         if (!res.ok) {
