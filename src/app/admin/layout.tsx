@@ -31,6 +31,11 @@ export default function AdminLayout({
                             部員管理
                         </Button>
                     </Link>
+                    <Link href="https://k8z6onfj9h.microcms.io/apis/blogs/create">
+                        <Button variant="ghost" className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800">
+                            ブログ作成
+                        </Button>
+                    </Link>
                     <div className="pt-4 mt-4 border-t border-slate-800">
                         <Link href="/">
                             <Button variant="ghost" className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800">

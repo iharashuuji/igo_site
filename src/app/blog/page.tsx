@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { getPublicPosts } from "@/lib/supabase/queries";
+import { getBlogs } from "@/lib/microcms";
 
 export const metadata = {
     title: "ブログ・お知らせ | 囲碁部",
@@ -9,7 +9,7 @@ export const metadata = {
 };
 
 export default async function BlogPage() {
-    const posts = await getPublicPosts();
+    const posts = await getBlogs();
 
     return (
         <div className="container py-12 space-y-12">
@@ -22,13 +22,13 @@ export default async function BlogPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {posts.map((post) => (
-                    <Link key={post.id} href={`/blog/${post.slug}`} className="group">
+                    <Link key={post.id} href={`/blog/${post.id}`} className="group">
                         <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow">
                             <div className="aspect-video bg-slate-100 relative">
-                                {post.thumbnail_url ? (
+                                {post.eyecatch?.url ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img
-                                        src={post.thumbnail_url}
+                                        src={post.eyecatch.url}
                                         alt={post.title}
                                         className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
                                     />
@@ -40,9 +40,9 @@ export default async function BlogPage() {
                             </div>
                             <CardHeader>
                                 <div className="flex items-center justify-between mb-2">
-                                    <Badge variant="outline">{post.category}</Badge>
+                                    {post.category && <Badge variant="outline">{post.category.name}</Badge>}
                                     <span className="text-xs text-muted-foreground">
-                                        {new Date(post.published_at).toLocaleDateString()}
+                                        {new Date(post.publishedAt).toLocaleDateString()}
                                     </span>
                                 </div>
                                 <CardTitle className="line-clamp-2 group-hover:text-primary transition-colors">
@@ -50,13 +50,10 @@ export default async function BlogPage() {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-sm text-muted-foreground line-clamp-3">
-                                    {/* Simple strip tags or just show content if plain text. 
-                      For now, just showing content directly assuming it's not too raw HTML heavy or just excerpt.
-                      Real implementation might need a proper excerpt generator.
-                  */}
-                                    {post.content?.substring(0, 100)}...
-                                </p>
+                                <div
+                                    className="text-sm text-muted-foreground line-clamp-3"
+                                    dangerouslySetInnerHTML={{ __html: post.content }}
+                                />
                             </CardContent>
                             <CardFooter>
                                 <span className="text-sm font-medium text-primary group-hover:underline">

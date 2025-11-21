@@ -2,8 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowRight, Calendar, Users, BookOpen } from "lucide-react";
+import { getBlogs } from "@/lib/microcms";
 
-export default function Home() {
+export default async function Home() {
+  const posts = await getBlogs();
+  const recentPosts = posts.slice(0, 3);
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -69,7 +73,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Latest News (Mock) */}
+      {/* Latest News */}
       <section className="py-16">
         <div className="container px-4 md:px-6">
           <div className="flex items-center justify-between mb-8">
@@ -79,23 +83,42 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Mock Data */}
-            {[1, 2, 3].map((i) => (
-              <Card key={i} className="hover:shadow-lg transition-shadow cursor-pointer">
-                <div className="aspect-video bg-muted w-full object-cover rounded-t-xl flex items-center justify-center text-muted-foreground">
-                  Image Placeholder
-                </div>
-                <CardContent className="p-4">
-                  <p className="text-xs text-muted-foreground mb-2">2024.04.{10 + i}</p>
-                  <h3 className="font-bold text-lg mb-2 line-clamp-2">
-                    {i === 1 ? "春の新歓活動が始まりました！" : i === 2 ? "春季合宿の様子をお届けします" : "初心者向け囲碁講座 第1回"}
-                  </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    今年の春は多くの新入生が見学に来てくれました。活動の様子を写真付きで紹介します...
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+            {recentPosts.length > 0 ? (
+              recentPosts.map((post) => (
+                <Link key={post.id} href={`/blog/${post.id}`} className="group">
+                  <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                    <div className="aspect-video bg-muted w-full object-cover rounded-t-xl flex items-center justify-center text-muted-foreground relative overflow-hidden">
+                      {post.eyecatch?.url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={post.eyecatch.url}
+                          alt={post.title}
+                          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <span className="text-sm">No Image</span>
+                      )}
+                    </div>
+                    <CardContent className="p-4">
+                      <p className="text-xs text-muted-foreground mb-2">
+                        {new Date(post.publishedAt).toLocaleDateString()}
+                      </p>
+                      <h3 className="font-bold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                        {post.title}
+                      </h3>
+                      <div
+                        className="text-sm text-muted-foreground line-clamp-2"
+                        dangerouslySetInnerHTML={{ __html: post.content }}
+                      />
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-8 text-muted-foreground">
+                記事がまだありません。
+              </div>
+            )}
           </div>
         </div>
       </section>

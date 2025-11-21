@@ -4,7 +4,16 @@ export interface MicroCMSImage {
     width: number;
 }
 
-export interface Article {
+export interface MicroCMSCategory {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+    revisedAt: string;
+    name: string;
+}
+
+export interface Blog {
     id: string;
     createdAt: string;
     updatedAt: string;
@@ -13,11 +22,10 @@ export interface Article {
     title: string;
     content: string;
     eyecatch?: MicroCMSImage;
-    category: {
-        id: string;
-        name: string;
-    };
+    category?: MicroCMSCategory;
 }
+
+export type Article = Blog; // Alias for backward compatibility if needed
 
 export interface Member {
     id: string;
