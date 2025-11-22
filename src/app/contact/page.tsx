@@ -31,7 +31,7 @@ export default function ContactPage() {
                         </CardHeader>
                         <CardContent>
                             <Button className="w-full" asChild>
-                                <a href="https://docs.google.com/forms" target="_blank" rel="noopener noreferrer">
+                                <a href="https://docs.google.com/forms/d/e/1FAIpQLSd8HGh8yseMHf1L-yhEK2VIUi7RSHnHpem7BnBh_jHn-sKmKQ/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer">
                                     フォームを開く
                                 </a>
                             </Button>

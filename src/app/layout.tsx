@@ -15,8 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "大学囲碁部 公式Webサイト",
+  title: "大阪公立大学（ハム大）囲碁部 公式Webサイト 部活 ",
   description: "初心者から有段者まで歓迎！大学囲碁部の公式Webサイトです。活動内容、ブログ、入部案内などを掲載しています。",
+
+  // 3. これがGoogle Search Consoleの認証コード！
+  verification: {
+    google: "oGyos_2f2uiAwC00C2B63QkwDzFAjkDkf89dMhgECKU", 
+  },
 };
 
 export default function RootLayout({
