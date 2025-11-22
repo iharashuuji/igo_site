@@ -17,6 +17,27 @@ const initialState: GameState = {
 export default function GameEntryClient({ members }: { members: any[] }) {
     const [state, formAction, isPending] = useActionState(addGame, initialState);
 
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+
+        // Generate result string from winner and win_method
+        const winner = formData.get('winner') as string;
+        const winMethod = formData.get('win_method') as string;
+
+        if (winner && winMethod) {
+            const resultPrefix = winner === 'black' ? 'B' : 'W';
+            const result = `${resultPrefix}+${winMethod}`;
+            formData.set('result', result);
+        }
+
+        // Remove the helper fields
+        formData.delete('winner');
+        formData.delete('win_method');
+
+        formAction(formData);
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -28,7 +49,7 @@ export default function GameEntryClient({ members }: { members: any[] }) {
                     <CardTitle>新規対局記録</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form action={formAction} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Date & Event */}
                             <div className="space-y-2">
@@ -89,10 +110,40 @@ export default function GameEntryClient({ members }: { members: any[] }) {
                                 </Select>
                             </div>
 
-                            {/* Result */}
+                            {/* Result - Split into Winner and Method */}
                             <div className="space-y-2">
-                                <Label htmlFor="result">結果</Label>
-                                <Input id="result" name="result" placeholder="例: B+R (黒中押し勝ち), W+3.5" required />
+                                <Label htmlFor="winner">勝者</Label>
+                                <Select name="winner" required>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="勝者を選択" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="black">黒番</SelectItem>
+                                        <SelectItem value="white">白番</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* Win Method */}
+                            <div className="space-y-2">
+                                <Label htmlFor="win_method">勝利方法</Label>
+                                <Select name="win_method" required>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="勝利方法を選択" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="R">中押勝ち</SelectItem>
+                                        <SelectItem value="T">時間切れ</SelectItem>
+                                        <SelectItem value="0.5">0.5目勝ち</SelectItem>
+                                        <SelectItem value="1.5">1.5目勝ち</SelectItem>
+                                        <SelectItem value="2.5">2.5目勝ち</SelectItem>
+                                        <SelectItem value="3.5">3.5目勝ち</SelectItem>
+                                        <SelectItem value="4.5">4.5目勝ち</SelectItem>
+                                        <SelectItem value="5.5">5.5目勝ち</SelectItem>
+                                        <SelectItem value="10.5">10.5目勝ち</SelectItem>
+                                        <SelectItem value="F">不戦勝</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
 

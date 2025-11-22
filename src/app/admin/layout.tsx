@@ -36,12 +36,18 @@ export default function AdminLayout({
                             ブログ作成
                         </Button>
                     </Link>
+                    <Link href="https://www.notion.so/1dcca2c51c3080ee85dbc9bd78bc8bed?source=copy_link">
+                    <Button variant="ghost" className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800">
+                            囲碁部マニュアル確認
+                        </Button>
+                    </Link>
                     <div className="pt-4 mt-4 border-t border-slate-800">
                         <Link href="/">
                             <Button variant="ghost" className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800">
                                 サイトに戻る
                             </Button>
                         </Link>
+                        
                     </div>
                 </nav>
             </aside>

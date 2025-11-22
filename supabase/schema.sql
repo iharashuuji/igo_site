@@ -8,6 +8,7 @@ create table public.members (
   grade integer not null check (grade >= 1 and grade <= 4),
   rank text not null, -- e.g., "五段", "10級"
   role text not null default '一般', -- e.g., "部長", "会計", "一般"
+  introduction text, -- Member bio/introduction
   avatar_url text,
   is_active boolean not null default true,
   display_order integer not null default 0,
@@ -89,4 +90,16 @@ create policy "Posts are insertable by authenticated users only"
 
 create policy "Posts are updatable by authenticated users only"
   on public.posts for update
+  using ( auth.role() = 'authenticated' );
+
+create policy "Members are deletable by authenticated users only"
+  on public.members for delete
+  using ( auth.role() = 'authenticated' );
+
+create policy "Games are deletable by authenticated users only"
+  on public.games for delete
+  using ( auth.role() = 'authenticated' );
+
+create policy "Posts are deletable by authenticated users only"
+  on public.posts for delete
   using ( auth.role() = 'authenticated' );

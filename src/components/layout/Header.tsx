@@ -38,6 +38,9 @@ export function Header() {
                     <Link href="/admin" className="transition-colors hover:text-primary">
                         管理者画面
                     </Link>
+                    <Link href="/link" className='transition-colors hover:text-primary'>
+                        リンク集
+                    </Link>
                 </nav>
 
                 <div className="flex items-center gap-4">
@@ -72,6 +75,9 @@ export function Header() {
                             </Link>
                             <Link href="/admin" className="text-sm font-medium transition-colors hover:text-primary" onClick={() => setIsMenuOpen(false)}>
                                 管理者画面
+                            </Link>
+                            <Link href="/link" className="text-sm font-medium transition-colors hover:text-primary" onClick={() => setIsMenuOpen(false)}>
+                                リンク集
                             </Link>
                             <Link href="/contact" onClick={() => setIsMenuOpen(false)}>
                                 <Button variant="default" size="sm" className="w-full">

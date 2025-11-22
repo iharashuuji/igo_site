@@ -23,7 +23,7 @@ export async function addMember(prevState: State, formData: FormData) {
     const grade = formData.get('grade') as string
     const rank = formData.get('rank') as string
     const role = formData.get('role') as string
-    // introduction is not in schema yet
+    const introduction = formData.get('introduction') as string
     const isActive = formData.get('isActive') === 'on'
 
     if (!name || !grade || !rank) {
@@ -38,6 +38,7 @@ export async function addMember(prevState: State, formData: FormData) {
             grade: parseInt(grade),
             rank,
             role,
+            introduction,
             is_active: isActive,
         })
 
@@ -86,6 +87,7 @@ export async function updateMember(prevState: State, formData: FormData) {
     const grade = formData.get('grade') as string
     const rank = formData.get('rank') as string
     const role = formData.get('role') as string
+    const introduction = formData.get('introduction') as string
     const isActive = formData.get('isActive') === 'on'
 
     if (!id || !name || !grade || !rank) {
@@ -100,6 +102,7 @@ export async function updateMember(prevState: State, formData: FormData) {
             grade: parseInt(grade),
             rank,
             role,
+            introduction,
             is_active: isActive,
             updated_at: new Date().toISOString(),
         }).eq('id', id)
@@ -138,4 +141,79 @@ export async function deleteMember(formData: FormData) {
 
     revalidatePath('/admin/members')
     revalidatePath('/members')
+}
+
+// --- Get Member by ID ---
+
+export async function getMemberById(id: string) {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+        .from('members')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+    if (error) {
+        console.error('Supabase Error:', error)
+        return null
+    }
+
+    return data
+}
+
+// --- Get Member Statistics ---
+
+export async function getMemberStats(memberId: string) {
+    const supabase = await createClient()
+
+    const { data: games, error } = await supabase
+        .from('games')
+        .select('*')
+        .or(`black_player_id.eq.${memberId},white_player_id.eq.${memberId}`)
+
+    if (error) {
+        console.error('Supabase Error:', error)
+        return { totalGames: 0, wins: 0, losses: 0, winRate: 0 }
+    }
+
+    const totalGames = games?.length || 0
+    let wins = 0
+
+    games?.forEach((game: any) => {
+        const result = game.result || ''
+        // Check if this member won
+        // B+ means black won, W+ means white won
+        if (result.startsWith('B+') && game.black_player_id === memberId) {
+            wins++
+        } else if (result.startsWith('W+') && game.white_player_id === memberId) {
+            wins++
+        }
+    })
+
+    const losses = totalGames - wins
+    const winRate = totalGames > 0 ? (wins / totalGames) * 100 : 0
+
+    return { totalGames, wins, losses, winRate: Math.round(winRate * 10) / 10 }
+}
+
+// --- Get Games for Member ---
+
+export async function getGamesForMember(memberId: string) {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+        .from('games')
+        .select(`
+            *,
+            black_player:members!black_player_id(name, rank),
+            white_player:members!white_player_id(name, rank)
+        `)
+        .or(`black_player_id.eq.${memberId},white_player_id.eq.${memberId}`)
+        .order('played_at', { ascending: false })
+
+    if (error) {
+        console.error('Supabase Error:', error)
+        return []
+    }
+
+    return data
 }
